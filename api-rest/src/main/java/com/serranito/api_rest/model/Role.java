@@ -1,4 +1,4 @@
-package com.serranito.api_rest.user;
+package com.serranito.api_rest.model;
 
 public enum Role {
     ADMIN,

@@ -1,4 +1,4 @@
-package com.serranito.api_rest.auth;
+package com.serranito.api_rest.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -6,9 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.serranito.api_rest.user.Role;
-import com.serranito.api_rest.user.User;
-import com.serranito.api_rest.user.UserRepository;
+import com.serranito.api_rest.auth.AuthResponse;
+import com.serranito.api_rest.auth.LoginRequest;
+import com.serranito.api_rest.auth.RegisterRequest;
+import com.serranito.api_rest.model.Role;
+import com.serranito.api_rest.model.User;
+import com.serranito.api_rest.repository.UserRepository;
+
 
 import lombok.RequiredArgsConstructor;
 
