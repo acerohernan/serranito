@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/auth';
 
@@ -9,7 +9,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setError('');
     setLoading(true);
 
@@ -52,7 +53,7 @@ const Login = () => {
                   </div>
                 )}
 
-                <form>
+                <form onSubmit={handleSubmit}>
                   <div className="mb-3">
                     <label htmlFor="username" className="form-label fw-semibold">
                       Usuario
@@ -86,10 +87,9 @@ const Login = () => {
                   </div>
 
                   <button
-                    type="button"
+                    type="submit"
                     className="btn btn-primary btn-lg w-100 fw-semibold"
                     disabled={loading}
-                    onClick={handleSubmit}
                   >
                     {loading ? (
                       <>
