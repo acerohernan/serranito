@@ -1,4 +1,4 @@
-package com.serranito.api_rest.auth;
+package com.serranito.api_rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
-    String username;
-    String password;
-    String firstname;
-    String lastname;
+public class AuthDTO {
+    String token; 
 }

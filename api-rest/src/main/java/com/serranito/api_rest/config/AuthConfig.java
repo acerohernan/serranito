@@ -10,7 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.serranito.api_rest.auth.JwtAuthenticationFilter;
+import com.serranito.api_rest.filters.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 

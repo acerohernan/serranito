@@ -1,4 +1,4 @@
-package com.serranito.api_rest.service;
+package com.serranito.api_rest.facade;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -6,35 +6,34 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.serranito.api_rest.auth.AuthResponse;
-import com.serranito.api_rest.auth.LoginRequest;
-import com.serranito.api_rest.auth.RegisterRequest;
+import com.serranito.api_rest.dto.AuthDTO;
+import com.serranito.api_rest.dto.LoginDTO;
+import com.serranito.api_rest.dto.RegisterDTO;
 import com.serranito.api_rest.model.Role;
 import com.serranito.api_rest.model.User;
 import com.serranito.api_rest.repository.UserRepository;
-
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthFacade {
     private final UserRepository userRepository;
-    private final JwtService jwtService;
+    private final JwtFacade jwtFacade;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthDTO login(LoginDTO request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token=jwtService.getToken(user);
-        return AuthResponse.builder()
+        String token=jwtFacade.getToken(user);
+        return AuthDTO.builder()
             .token(token)
             .build();
 
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    public AuthDTO register(RegisterDTO request) {
         User user = User.builder()
             .username(request.getUsername())
             .password(passwordEncoder.encode( request.getPassword()))
@@ -45,8 +44,8 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return AuthResponse.builder()
-            .token(jwtService.getToken(user))
+        return AuthDTO.builder()
+            .token(jwtFacade.getToken(user))
             .build();
     }
 }

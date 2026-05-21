@@ -30,6 +30,15 @@ public class EmpresaFacade {
         return toDTO(empresa);
     }
 
+    public EmpresaDTO editEmpresa(EmpresaDTO dto) {
+        List<Empresa> empresas = empresaDAO.findAll();
+        if (empresas == null || empresas.isEmpty()) {
+            return createEmpresa(dto);
+        }
+        Integer id = empresas.get(0).getIdEmpresa();
+        return updateEmpresa(id, dto);
+    }
+
     public EmpresaDTO createEmpresa(EmpresaDTO dto) {
         Empresa empresa = toEntity(dto);
         empresa.setIdEmpresa(null);

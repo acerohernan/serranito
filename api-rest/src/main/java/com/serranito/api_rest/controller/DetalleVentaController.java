@@ -12,20 +12,33 @@ import java.util.List;
 public class DetalleVentaController {
     private final DetalleVentaFacade facade;
 
-    public DetalleVentaController(DetalleVentaFacade facade) { this.facade = facade; }
+    public DetalleVentaController(DetalleVentaFacade facade) {
+        this.facade = facade;
+    }
 
     @GetMapping
-    public List<DetalleVentaDTO> list() { return facade.getAllDetalles(); }
+    public List<DetalleVentaDTO> list() {
+        return facade.getAllDetalles();
+    }
 
     @GetMapping("/{id}")
-    public DetalleVentaDTO get(@PathVariable Integer id) { return facade.getDetalleById(id); }
+    public DetalleVentaDTO get(@PathVariable Integer id) {
+        return facade.getDetalleById(id);
+    }
 
     @PostMapping
-    public ResponseEntity<DetalleVentaDTO> create(@RequestBody DetalleVentaDTO dto) { return ResponseEntity.ok(facade.createDetalle(dto)); }
+    public ResponseEntity<DetalleVentaDTO> create(@RequestBody DetalleVentaDTO dto) {
+        return ResponseEntity.ok(facade.createDetalle(dto));
+    }
 
     @PutMapping("/{id}")
-    public DetalleVentaDTO update(@PathVariable Integer id, @RequestBody DetalleVentaDTO dto) { return facade.updateDetalle(id, dto); }
+    public DetalleVentaDTO update(@PathVariable Integer id, @RequestBody DetalleVentaDTO dto) {
+        return facade.updateDetalle(id, dto);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) { facade.deleteDetalle(id); return ResponseEntity.noContent().build(); }
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        facade.deleteDetalle(id);
+        return ResponseEntity.noContent().build();
+    }
 }

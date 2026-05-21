@@ -1,4 +1,4 @@
-package com.serranito.api_rest.service;
+package com.serranito.api_rest.facade;
 
 import java.security.Key;
 import java.util.Date;
@@ -16,7 +16,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JwtService {
+public class JwtFacade {
 
     private static final String SECRET_KEY="586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
 

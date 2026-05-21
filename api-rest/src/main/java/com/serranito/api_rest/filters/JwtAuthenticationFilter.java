@@ -1,4 +1,4 @@
-package com.serranito.api_rest.auth;
+package com.serranito.api_rest.filters;
 
 import java.io.IOException;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.serranito.api_rest.service.JwtService;
+import com.serranito.api_rest.facade.JwtFacade;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final JwtFacade jwtFacade;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -39,13 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        username=jwtService.getUsernameFromToken(token);
+        username=jwtFacade.getUsernameFromToken(token);
 
         if (username!=null && SecurityContextHolder.getContext().getAuthentication()==null)
         {
             UserDetails userDetails=userDetailsService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(token, userDetails))
+            if (jwtFacade.isTokenValid(token, userDetails))
             {
                 UsernamePasswordAuthenticationToken authToken= new UsernamePasswordAuthenticationToken(
                     userDetails,

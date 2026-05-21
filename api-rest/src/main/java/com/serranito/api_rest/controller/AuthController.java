@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.serranito.api_rest.auth.AuthResponse;
-import com.serranito.api_rest.auth.LoginRequest;
-import com.serranito.api_rest.auth.RegisterRequest;
-import com.serranito.api_rest.service.AuthService;
+import com.serranito.api_rest.dto.AuthDTO;
+import com.serranito.api_rest.dto.LoginDTO;
+import com.serranito.api_rest.dto.RegisterDTO;
+import com.serranito.api_rest.facade.AuthFacade;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,17 +17,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-     private final AuthService authService;
+    private final AuthFacade facade;
     
-    @PostMapping(value = "login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request)
+    @PostMapping("/login")
+    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO request)
     {
-        return ResponseEntity.ok(authService.login(request));
+        return ResponseEntity.ok(facade.login(request));
     }
 
-    @PostMapping(value = "register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request)
+    @PostMapping("/register")
+    public ResponseEntity<AuthDTO> register(@RequestBody RegisterDTO request)
     {
-        return ResponseEntity.ok(authService.register(request));
+        return ResponseEntity.ok(facade.register(request));
     }
 }

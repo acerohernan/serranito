@@ -34,14 +34,7 @@ public class EmpresaController {
 
     @PutMapping
     public ResponseEntity<EmpresaDTO> edit(@RequestBody EmpresaDTO dto) {
-        List<EmpresaDTO> list = facade.getAllEmpresas();
-        if (list == null || list.isEmpty()) {
-            EmpresaDTO created = facade.createEmpresa(dto);
-            return ResponseEntity.ok(created);
-        } else {
-            Integer id = list.get(0).getId();
-            EmpresaDTO updated = facade.updateEmpresa(id, dto);
-            return ResponseEntity.ok(updated);
-        }
+        EmpresaDTO result = facade.editEmpresa(dto);
+        return ResponseEntity.ok(result);
     }
 }

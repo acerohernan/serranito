@@ -1,14 +1,16 @@
-package com.serranito.api_rest.auth;
+package com.serranito.api_rest.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuthResponse {
-    String token; 
+@NoArgsConstructor
+public class LoginDTO{
+    String username;
+    String password; 
 }
