@@ -18,16 +18,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthFacade facade;
-    
+
     @PostMapping("/login")
-    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO request)
-    {
+    public ResponseEntity<AuthDTO> login(@RequestBody LoginDTO request) {
         return ResponseEntity.ok(facade.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthDTO> register(@RequestBody RegisterDTO request)
-    {
+    public ResponseEntity<AuthDTO> register(@RequestBody RegisterDTO request) {
         return ResponseEntity.ok(facade.register(request));
     }
 }
