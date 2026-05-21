@@ -35,7 +35,7 @@ export interface Venta {
 }
 
 export interface Empresa {
-  idEmpresa: number;
+  id?: number | null;
   ruc?: string;
   nombre?: string;
   telefono?: string;
@@ -53,6 +53,11 @@ const getOne = async <T>(path: string, id: number): Promise<T> => {
   return response.data;
 };
 
+const get = async <T>(path: string): Promise<T> => {
+  const response = await api.get<T>(path);
+  return response.data;
+};
+
 const create = async <T>(path: string, payload: T): Promise<T> => {
   const response = await api.post<T>(path, payload);
   return response.data;
@@ -60,6 +65,11 @@ const create = async <T>(path: string, payload: T): Promise<T> => {
 
 const update = async <T>(path: string, id: number, payload: T): Promise<T> => {
   const response = await api.put<T>(`${path}/${id}`, payload);
+  return response.data;
+};
+
+const updateNoId = async <T>(path: string, payload: T): Promise<T> => {
+  const response = await api.put<T>(path, payload);
   return response.data;
 };
 
@@ -110,9 +120,12 @@ export const ventasService = {
 export const empresaService = {
   list: () => list<Empresa>("/empresa"),
   getOne: (id: number) => getOne<Empresa>("/empresa", id),
-  create: (payload: Omit<Empresa, "id_empresa">) =>
+  getConfig: () => get<Empresa>("/empresa"),
+  create: (payload: Omit<Empresa, "id">) =>
     create<Empresa>("/empresa", payload),
-  update: (id: number, payload: Omit<Empresa, "id_empresa">) =>
+  update: (id: number, payload: Omit<Empresa, "id">) =>
     update<Empresa>("/empresa", id, payload),
+  saveConfig: (payload: Omit<Empresa, "id">) =>
+    updateNoId<Empresa>("/empresa", payload),
   remove: (id: number) => remove("/empresa", id),
 };
