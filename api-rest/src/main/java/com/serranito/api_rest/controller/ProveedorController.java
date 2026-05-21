@@ -12,20 +12,33 @@ import java.util.List;
 public class ProveedorController {
     private final ProveedorFacade facade;
 
-    public ProveedorController(ProveedorFacade facade) { this.facade = facade; }
+    public ProveedorController(ProveedorFacade facade) {
+        this.facade = facade;
+    }
 
     @GetMapping
-    public List<ProveedorDTO> list() { return facade.getAllProveedores(); }
+    public List<ProveedorDTO> list() {
+        return facade.getAllProveedores();
+    }
 
     @GetMapping("/{id}")
-    public ProveedorDTO get(@PathVariable Integer id) { return facade.getProveedorById(id); }
+    public ProveedorDTO get(@PathVariable Integer id) {
+        return facade.getProveedorById(id);
+    }
 
     @PostMapping
-    public ResponseEntity<ProveedorDTO> create(@RequestBody ProveedorDTO dto) { return ResponseEntity.ok(facade.createProveedor(dto)); }
+    public ResponseEntity<ProveedorDTO> create(@RequestBody ProveedorDTO dto) {
+        return ResponseEntity.ok(facade.createProveedor(dto));
+    }
 
     @PutMapping("/{id}")
-    public ProveedorDTO update(@PathVariable Integer id, @RequestBody ProveedorDTO dto) { return facade.updateProveedor(id, dto); }
+    public ProveedorDTO update(@PathVariable Integer id, @RequestBody ProveedorDTO dto) {
+        return facade.updateProveedor(id, dto);
+    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) { facade.deleteProveedor(id); return ResponseEntity.noContent().build(); }
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        facade.deleteProveedor(id);
+        return ResponseEntity.noContent().build();
+    }
 }
