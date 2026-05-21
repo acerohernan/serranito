@@ -10,7 +10,7 @@ export interface Cliente {
 }
 
 export interface Proveedor {
-  idProveedor: number;
+  id: number;
   ruc: string;
   nombre: string;
   telefono?: string;
@@ -19,7 +19,7 @@ export interface Proveedor {
 }
 
 export interface Producto {
-  idProducto: number;
+  id: number;
   codigo?: string;
   descripcion?: string;
   stock?: number;
@@ -80,20 +80,20 @@ export const clientesService = {
 export const proveedoresService = {
   list: () => list<Proveedor>("/proveedores"),
   getOne: (id: number) => getOne<Proveedor>("/proveedores", id),
-  create: (payload: Omit<Proveedor, "id_proveedor">) =>
-    create<Proveedor>("/proveedores", payload),
-  update: (id: number, payload: Omit<Proveedor, "id_proveedor">) =>
-    update<Proveedor>("/proveedores", id, payload),
+  create: (payload: Omit<Proveedor, "id">) =>
+    create<Omit<Proveedor, "id">>("/proveedores", payload),
+  update: (id: number, payload: Omit<Proveedor, "id">) =>
+    update<Omit<Proveedor, "id">>("/proveedores", id, payload),
   remove: (id: number) => remove("/proveedores", id),
 };
 
 export const productosService = {
   list: () => list<Producto>("/productos"),
   getOne: (id: number) => getOne<Producto>("/productos", id),
-  create: (payload: Omit<Producto, "id_producto">) =>
-    create<Producto>("/productos", payload),
-  update: (id: number, payload: Omit<Producto, "id_producto">) =>
-    update<Producto>("/productos", id, payload),
+  create: (payload: Omit<Producto, "id">) =>
+    create<Omit<Producto, "id">>("/productos", payload),
+  update: (id: number, payload: Omit<Producto, "id">) =>
+    update<Omit<Producto, "id">>("/productos", id, payload),
   remove: (id: number) => remove("/productos", id),
 };
 

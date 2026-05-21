@@ -14,7 +14,7 @@ const Proveedores = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Omit<Proveedor, "id_proveedor">>({
+  } = useForm<Omit<Proveedor, "id">>({
     defaultValues: {
       ruc: "",
       nombre: "",
@@ -33,7 +33,13 @@ const Proveedores = () => {
     mutationFn: proveedoresService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["proveedores"] });
-      reset();
+      reset({
+        ruc: "",
+        nombre: "",
+        telefono: "",
+        direccion: "",
+        razonSocial: "",
+      });
     },
   });
 
@@ -43,12 +49,18 @@ const Proveedores = () => {
       payload,
     }: {
       id: number;
-      payload: Omit<Proveedor, "id_proveedor">;
+      payload: Omit<Proveedor, "id">;
     }) => proveedoresService.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["proveedores"] });
       setSelectedProveedor(null);
-      reset();
+      reset({
+        ruc: "",
+        nombre: "",
+        telefono: "",
+        direccion: "",
+        razonSocial: "",
+      });
     },
   });
 
@@ -70,10 +82,10 @@ const Proveedores = () => {
     }
   }, [selectedProveedor, reset]);
 
-  const onSubmit = (data: Omit<Proveedor, "id_proveedor">) => {
+  const onSubmit = (data: Omit<Proveedor, "id">) => {
     if (selectedProveedor) {
       updateMutation.mutate({
-        id: selectedProveedor.idProveedor,
+        id: selectedProveedor.id,
         payload: data,
       });
       return;
@@ -150,7 +162,13 @@ const Proveedores = () => {
                     className="btn btn-outline-secondary w-100 mt-2"
                     onClick={() => {
                       setSelectedProveedor(null);
-                      reset();
+                      reset({
+                        ruc: "",
+                        nombre: "",
+                        telefono: "",
+                        direccion: "",
+                        razonSocial: "",
+                      });
                     }}
                   >
                     Cancelar edición
@@ -181,8 +199,8 @@ const Proveedores = () => {
                     </thead>
                     <tbody>
                       {proveedores.map((proveedor) => (
-                        <tr key={proveedor.idProveedor}>
-                          <td>{proveedor.idProveedor}</td>
+                        <tr key={proveedor.id}>
+                          <td>{proveedor.id}</td>
                           <td>{proveedor.ruc}</td>
                           <td>{proveedor.nombre}</td>
                           <td>{proveedor.telefono || "-"}</td>
@@ -196,7 +214,7 @@ const Proveedores = () => {
                             <button
                               className="btn btn-sm btn-outline-danger"
                               onClick={() =>
-                                deleteMutation.mutate(proveedor.idProveedor)
+                                deleteMutation.mutate(proveedor.id)
                               }
                             >
                               Eliminar

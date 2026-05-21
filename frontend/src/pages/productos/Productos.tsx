@@ -19,7 +19,7 @@ const Productos = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Omit<Producto, "id_producto">>({
+  } = useForm<Omit<Producto, "id">>({
     defaultValues: {
       codigo: "",
       descripcion: "",
@@ -42,7 +42,13 @@ const Productos = () => {
     mutationFn: productosService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productos"] });
-      reset();
+      reset({
+        codigo: "",
+        descripcion: "",
+        stock: 0,
+        precio: 0,
+        idProveedor: undefined,
+      });
     },
   });
 
@@ -52,12 +58,18 @@ const Productos = () => {
       payload,
     }: {
       id: number;
-      payload: Omit<Producto, "id_producto">;
+      payload: Omit<Producto, "id">;
     }) => productosService.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["productos"] });
       setSelectedProducto(null);
-      reset();
+      reset({
+        codigo: "",
+        descripcion: "",
+        stock: 0,
+        precio: 0,
+        idProveedor: undefined,
+      });
     },
   });
 
@@ -78,10 +90,10 @@ const Productos = () => {
     }
   }, [selectedProducto, reset]);
 
-  const onSubmit = (data: Omit<Producto, "id_producto">) => {
+  const onSubmit = (data: Omit<Producto, "id">) => {
     if (selectedProducto) {
       updateMutation.mutate({
-        id: selectedProducto.idProducto,
+        id: selectedProducto.id,
         payload: data,
       });
       return;
@@ -145,10 +157,7 @@ const Productos = () => {
                   >
                     <option value="">Selecciona un proveedor</option>
                     {proveedores.map((proveedor) => (
-                      <option
-                        key={proveedor.idProveedor}
-                        value={proveedor.idProveedor}
-                      >
+                      <option key={proveedor.id} value={proveedor.id}>
                         {proveedor.nombre}
                       </option>
                     ))}
@@ -168,7 +177,13 @@ const Productos = () => {
                     className="btn btn-outline-secondary w-100 mt-2"
                     onClick={() => {
                       setSelectedProducto(null);
-                      reset();
+                      reset({
+                        codigo: "",
+                        descripcion: "",
+                        stock: 0,
+                        precio: 0,
+                        idProveedor: undefined,
+                      });
                     }}
                   >
                     Cancelar edición
@@ -201,16 +216,15 @@ const Productos = () => {
                     </thead>
                     <tbody>
                       {productos.map((producto) => (
-                        <tr key={producto.idProducto}>
-                          <td>{producto.idProducto}</td>
+                        <tr key={producto.id}>
+                          <td>{producto.id}</td>
                           <td>{producto.codigo || "-"}</td>
                           <td>{producto.descripcion || "-"}</td>
                           <td>{producto.stock ?? "-"}</td>
                           <td>{producto.precio?.toFixed(2) ?? "-"}</td>
                           <td>
                             {proveedores.find(
-                              (item) =>
-                                item.idProveedor === producto.idProveedor,
+                              (item) => item.id === producto.idProveedor,
                             )?.nombre || "-"}
                           </td>
                           <td>
@@ -222,9 +236,7 @@ const Productos = () => {
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() =>
-                                deleteMutation.mutate(producto.idProducto)
-                              }
+                              onClick={() => deleteMutation.mutate(producto.id)}
                             >
                               Eliminar
                             </button>
