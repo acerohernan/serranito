@@ -16,7 +16,7 @@ const Ventas = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Omit<Venta, "id_venta">>({
+  } = useForm<Omit<Venta, "id">>({
     defaultValues: {
       idCliente: undefined,
       fecha: "",
@@ -37,22 +37,25 @@ const Ventas = () => {
     mutationFn: ventasService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
-      reset();
+      reset({
+        idCliente: undefined,
+        fecha: "",
+        total: 0,
+      });
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: number;
-      payload: Omit<Venta, "id_venta">;
-    }) => ventasService.update(id, payload),
+    mutationFn: ({ id, payload }: { id: number; payload: Omit<Venta, "id"> }) =>
+      ventasService.update(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ventas"] });
       setSelectedVenta(null);
-      reset();
+      reset({
+        idCliente: undefined,
+        fecha: "",
+        total: 0,
+      });
     },
   });
 
@@ -64,15 +67,15 @@ const Ventas = () => {
     if (selectedVenta) {
       reset({
         idCliente: selectedVenta.idCliente,
-        fecha: selectedVenta.fecha ? selectedVenta.fecha.split("T")[0] : "",
+        fecha: selectedVenta.fecha ?? "",
         total: selectedVenta.total || 0,
       });
     }
   }, [selectedVenta, reset]);
 
-  const onSubmit = (data: Omit<Venta, "id_venta">) => {
+  const onSubmit = (data: Omit<Venta, "id">) => {
     if (selectedVenta) {
-      updateMutation.mutate({ id: selectedVenta.idVenta, payload: data });
+      updateMutation.mutate({ id: selectedVenta.id, payload: data });
       return;
     }
     createMutation.mutate(data);
@@ -120,7 +123,7 @@ const Ventas = () => {
                 <div className="mb-3">
                   <label className="form-label">Fecha</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     className="form-control"
                     {...register("fecha")}
                   />
@@ -143,7 +146,11 @@ const Ventas = () => {
                     className="btn btn-outline-secondary w-100 mt-2"
                     onClick={() => {
                       setSelectedVenta(null);
-                      reset();
+                      reset({
+                        idCliente: undefined,
+                        fecha: "",
+                        total: 0,
+                      });
                     }}
                   >
                     Cancelar edición
@@ -174,8 +181,8 @@ const Ventas = () => {
                     </thead>
                     <tbody>
                       {ventas.map((venta) => (
-                        <tr key={venta.idVenta}>
-                          <td>{venta.idVenta}</td>
+                        <tr key={venta.id}>
+                          <td>{venta.id}</td>
                           <td>
                             {clientes.find(
                               (item) => item.id === venta.idCliente,
@@ -196,9 +203,7 @@ const Ventas = () => {
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() =>
-                                deleteMutation.mutate(venta.idVenta)
-                              }
+                              onClick={() => deleteMutation.mutate(venta.id)}
                             >
                               Eliminar
                             </button>

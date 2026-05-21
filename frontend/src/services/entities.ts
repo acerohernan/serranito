@@ -28,7 +28,7 @@ export interface Producto {
 }
 
 export interface Venta {
-  idVenta: number;
+  id: number;
   idCliente?: number;
   fecha?: string;
   total?: number;
@@ -100,10 +100,10 @@ export const productosService = {
 export const ventasService = {
   list: () => list<Venta>("/ventas"),
   getOne: (id: number) => getOne<Venta>("/ventas", id),
-  create: (payload: Omit<Venta, "id_venta">) =>
-    create<Venta>("/ventas", payload),
-  update: (id: number, payload: Omit<Venta, "id_venta">) =>
-    update<Venta>("/ventas", id, payload),
+  create: (payload: Omit<Venta, "id">) =>
+    create<Omit<Venta, "id">>("/ventas", payload),
+  update: (id: number, payload: Omit<Venta, "id">) =>
+    update<Omit<Venta, "id">>("/ventas", id, payload),
   remove: (id: number) => remove("/ventas", id),
 };
 

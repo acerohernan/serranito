@@ -1,40 +1,43 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/auth';
+import { useState, type FormEvent } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { authService } from "../services/auth";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       const response = await authService.login({ username, password });
-      console.log('Login exitoso:', response);
-      
+      console.log("Login exitoso:", response);
+
       // Guardar token si existe
       if (response.token) {
-        localStorage.setItem('token', response.token);
+        localStorage.setItem("token", response.token);
       }
-      
+
       // Redirigir al dashboard
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
-      console.error('Error:', err);
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
+      console.error("Error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: '#f8f9fa' }}>
+    <div
+      className="min-vh-100 d-flex align-items-center justify-content-center"
+      style={{ backgroundColor: "#f8f9fa" }}
+    >
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6 col-lg-5">
@@ -43,19 +46,25 @@ const Login = () => {
                 <h2 className="text-center mb-4 fw-bold">Iniciar Sesión</h2>
 
                 {error && (
-                  <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                  <div
+                    className="alert alert-danger alert-dismissible fade show"
+                    role="alert"
+                  >
                     {error}
                     <button
                       type="button"
                       className="btn-close"
-                      onClick={() => setError('')}
+                      onClick={() => setError("")}
                     />
                   </div>
                 )}
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="username" className="form-label fw-semibold">
+                    <label
+                      htmlFor="username"
+                      className="form-label fw-semibold"
+                    >
                       Usuario
                     </label>
                     <input
@@ -71,7 +80,10 @@ const Login = () => {
                   </div>
 
                   <div className="mb-4">
-                    <label htmlFor="password" className="form-label fw-semibold">
+                    <label
+                      htmlFor="password"
+                      className="form-label fw-semibold"
+                    >
                       Contraseña
                     </label>
                     <input
@@ -97,7 +109,7 @@ const Login = () => {
                         Cargando...
                       </>
                     ) : (
-                      'Iniciar Sesión'
+                      "Iniciar Sesión"
                     )}
                   </button>
                 </form>
@@ -105,8 +117,11 @@ const Login = () => {
                 <hr className="my-4" />
 
                 <p className="text-center text-muted">
-                  ¿No tienes cuenta?{' '}
-                  <Link to="/register" className="text-primary fw-semibold text-decoration-none">
+                  ¿No tienes cuenta?{" "}
+                  <Link
+                    to="/register"
+                    className="text-primary fw-semibold text-decoration-none"
+                  >
                     Regístrate aquí
                   </Link>
                 </p>
