@@ -8,24 +8,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/empresas")
+@RequestMapping("/api/empresa")
 public class EmpresaController {
     private final EmpresaFacade facade;
 
-    public EmpresaController(EmpresaFacade facade) { this.facade = facade; }
+    public EmpresaController(EmpresaFacade facade) {
+        this.facade = facade;
+    }
 
     @GetMapping
-    public List<EmpresaDTO> list() { return facade.getAllEmpresas(); }
+    public EmpresaDTO get() {
+        List<EmpresaDTO> list = facade.getAllEmpresas();
+        if (list == null || list.isEmpty()) {
+            return EmpresaDTO.builder()
+                    .id(null)
+                    .ruc("")
+                    .nombre("")
+                    .telefono("")
+                    .direccion("")
+                    .razonSocial("")
+                    .build();
+        }
+        return list.get(0);
+    }
 
-    @GetMapping("/{id}")
-    public EmpresaDTO get(@PathVariable Integer id) { return facade.getEmpresaById(id); }
-
-    @PostMapping
-    public ResponseEntity<EmpresaDTO> create(@RequestBody EmpresaDTO dto) { return ResponseEntity.ok(facade.createEmpresa(dto)); }
-
-    @PutMapping("/{id}")
-    public EmpresaDTO update(@PathVariable Integer id, @RequestBody EmpresaDTO dto) { return facade.updateEmpresa(id, dto); }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) { facade.deleteEmpresa(id); return ResponseEntity.noContent().build(); }
+    @PutMapping
+    public ResponseEntity<EmpresaDTO> edit(@RequestBody EmpresaDTO dto) {
+        List<EmpresaDTO> list = facade.getAllEmpresas();
+        if (list == null || list.isEmpty()) {
+            EmpresaDTO created = facade.createEmpresa(dto);
+            return ResponseEntity.ok(created);
+        } else {
+            Integer id = list.get(0).getId();
+            EmpresaDTO updated = facade.updateEmpresa(id, dto);
+            return ResponseEntity.ok(updated);
+        }
+    }
 }
