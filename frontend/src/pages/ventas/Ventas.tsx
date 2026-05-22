@@ -6,6 +6,8 @@ import {
   ventasService,
   clientesService,
 } from "../../services/entities";
+import VentaFormModal from "./VentaFormModal";
+import VentaDeleteModal from "./VentaDeleteModal";
 
 const Ventas = () => {
   const queryClient = useQueryClient();
@@ -73,12 +75,40 @@ const Ventas = () => {
     }
   }, [selectedVenta, reset]);
 
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toDelete, setToDelete] = useState<Venta | null>(null);
+
   const onSubmit = (data: Omit<Venta, "id">) => {
     if (selectedVenta) {
       updateMutation.mutate({ id: selectedVenta.id, payload: data });
       return;
     }
     createMutation.mutate(data);
+  };
+
+  const openCreate = () => {
+    setSelectedVenta(null);
+    reset({ idCliente: undefined, fecha: "", total: 0 });
+    setShowModal(true);
+  };
+
+  const openEdit = (venta: Venta) => {
+    setSelectedVenta(venta);
+    setShowModal(true);
+  };
+
+  const confirmDelete = (venta: Venta) => {
+    setToDelete(venta);
+    setShowDeleteModal(true);
+  };
+
+  const doDelete = () => {
+    if (toDelete) {
+      deleteMutation.mutate(toDelete.id);
+    }
+    setShowDeleteModal(false);
+    setToDelete(null);
   };
 
   return (
@@ -92,76 +122,14 @@ const Ventas = () => {
         </div>
       </div>
 
-      <div className="row gy-4">
-        <div className="col-lg-5">
-          <div className="card border-secondary shadow-sm">
-            <div className="card-body">
-              <h5>{selectedVenta ? "Editar venta" : "Nueva venta"}</h5>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3">
-                  <label className="form-label">Cliente</label>
-                  <select
-                    className="form-select"
-                    {...register("idCliente", {
-                      valueAsNumber: true,
-                      required: "Cliente es obligatorio",
-                    })}
-                  >
-                    <option value="">Selecciona un cliente</option>
-                    {clientes.map((cliente) => (
-                      <option key={cliente.id} value={cliente.id}>
-                        {cliente.nombre}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.idCliente && (
-                    <div className="text-danger mt-1">
-                      {errors.idCliente.message}
-                    </div>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Fecha</label>
-                  <input
-                    type="datetime-local"
-                    className="form-control"
-                    {...register("fecha")}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Total</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-control"
-                    {...register("total", { valueAsNumber: true })}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary w-100">
-                  {selectedVenta ? "Actualizar venta" : "Crear venta"}
-                </button>
-                {selectedVenta && (
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary w-100 mt-2"
-                    onClick={() => {
-                      setSelectedVenta(null);
-                      reset({
-                        idCliente: undefined,
-                        fecha: "",
-                        total: 0,
-                      });
-                    }}
-                  >
-                    Cancelar edición
-                  </button>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
+      <div className="d-flex justify-content-end mb-4">
+        <button className="btn btn-black" onClick={openCreate}>
+          + Nueva Venta
+        </button>
+      </div>
 
-        <div className="col-lg-7">
+      <div className="row gy-4">
+        <div className="col-12">
           <div className="card border-secondary shadow-sm">
             <div className="card-body">
               <h5>Lista de ventas</h5>
@@ -197,13 +165,13 @@ const Ventas = () => {
                           <td>
                             <button
                               className="btn btn-sm btn-outline-primary me-2"
-                              onClick={() => setSelectedVenta(venta)}
+                              onClick={() => openEdit(venta)}
                             >
                               Editar
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() => deleteMutation.mutate(venta.id)}
+                              onClick={() => confirmDelete(venta)}
                             >
                               Eliminar
                             </button>
@@ -218,6 +186,31 @@ const Ventas = () => {
           </div>
         </div>
       </div>
+
+      <VentaFormModal
+        show={showModal}
+        selectedVenta={selectedVenta}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedVenta(null);
+          reset({ idCliente: undefined, fecha: "", total: 0 });
+        }}
+        onSubmit={(data) => {
+          onSubmit(data);
+          setShowModal(false);
+        }}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+        clientes={clientes}
+      />
+
+      <VentaDeleteModal
+        show={showDeleteModal}
+        venta={toDelete}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={doDelete}
+      />
     </div>
   );
 };

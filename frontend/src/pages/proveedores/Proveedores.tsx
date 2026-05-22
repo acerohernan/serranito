@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Proveedor, proveedoresService } from "../../services/entities";
+import ProveedorFormModal from "./ProveedorFormModal";
+import ProveedorDeleteModal from "./ProveedorDeleteModal";
 
 const Proveedores = () => {
   const queryClient = useQueryClient();
@@ -82,6 +84,10 @@ const Proveedores = () => {
     }
   }, [selectedProveedor, reset]);
 
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toDelete, setToDelete] = useState<Proveedor | null>(null);
+
   const onSubmit = (data: Omit<Proveedor, "id">) => {
     if (selectedProveedor) {
       updateMutation.mutate({
@@ -91,6 +97,36 @@ const Proveedores = () => {
       return;
     }
     createMutation.mutate(data);
+  };
+
+  const openCreate = () => {
+    setSelectedProveedor(null);
+    reset({
+      ruc: "",
+      nombre: "",
+      telefono: "",
+      direccion: "",
+      razonSocial: "",
+    });
+    setShowModal(true);
+  };
+
+  const openEdit = (proveedor: Proveedor) => {
+    setSelectedProveedor(proveedor);
+    setShowModal(true);
+  };
+
+  const confirmDelete = (proveedor: Proveedor) => {
+    setToDelete(proveedor);
+    setShowDeleteModal(true);
+  };
+
+  const doDelete = () => {
+    if (toDelete) {
+      deleteMutation.mutate(toDelete.id);
+    }
+    setShowDeleteModal(false);
+    setToDelete(null);
   };
 
   return (
@@ -104,82 +140,14 @@ const Proveedores = () => {
         </div>
       </div>
 
-      <div className="row gy-4">
-        <div className="col-lg-5">
-          <div className="card border-secondary shadow-sm">
-            <div className="card-body">
-              <h5>
-                {selectedProveedor ? "Editar proveedor" : "Nuevo proveedor"}
-              </h5>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3">
-                  <label className="form-label">RUC</label>
-                  <input
-                    className="form-control"
-                    {...register("ruc", { required: "RUC es obligatorio" })}
-                  />
-                  {errors.ruc && (
-                    <div className="text-danger mt-1">{errors.ruc.message}</div>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input
-                    className="form-control"
-                    {...register("nombre", {
-                      required: "Nombre es obligatorio",
-                    })}
-                  />
-                  {errors.nombre && (
-                    <div className="text-danger mt-1">
-                      {errors.nombre.message}
-                    </div>
-                  )}
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Teléfono</label>
-                  <input className="form-control" {...register("telefono")} />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Dirección</label>
-                  <input className="form-control" {...register("direccion")} />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Razón social</label>
-                  <input
-                    className="form-control"
-                    {...register("razonSocial")}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary w-100">
-                  {selectedProveedor
-                    ? "Actualizar proveedor"
-                    : "Crear proveedor"}
-                </button>
-                {selectedProveedor && (
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary w-100 mt-2"
-                    onClick={() => {
-                      setSelectedProveedor(null);
-                      reset({
-                        ruc: "",
-                        nombre: "",
-                        telefono: "",
-                        direccion: "",
-                        razonSocial: "",
-                      });
-                    }}
-                  >
-                    Cancelar edición
-                  </button>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
+      <div className="d-flex justify-content-end mb-4">
+        <button className="btn btn-black" onClick={openCreate}>
+          + Nuevo Proveedor
+        </button>
+      </div>
 
-        <div className="col-lg-7">
+      <div className="row gy-4">
+        <div className="col-12">
           <div className="card border-secondary shadow-sm">
             <div className="card-body">
               <h5>Lista de proveedores</h5>
@@ -207,15 +175,13 @@ const Proveedores = () => {
                           <td>
                             <button
                               className="btn btn-sm btn-outline-primary me-2"
-                              onClick={() => setSelectedProveedor(proveedor)}
+                              onClick={() => openEdit(proveedor)}
                             >
                               Editar
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() =>
-                                deleteMutation.mutate(proveedor.id)
-                              }
+                              onClick={() => confirmDelete(proveedor)}
                             >
                               Eliminar
                             </button>
@@ -230,6 +196,36 @@ const Proveedores = () => {
           </div>
         </div>
       </div>
+
+      <ProveedorFormModal
+        show={showModal}
+        selectedProveedor={selectedProveedor}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedProveedor(null);
+          reset({
+            ruc: "",
+            nombre: "",
+            telefono: "",
+            direccion: "",
+            razonSocial: "",
+          });
+        }}
+        onSubmit={(data) => {
+          onSubmit(data);
+          setShowModal(false);
+        }}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
+
+      <ProveedorDeleteModal
+        show={showDeleteModal}
+        proveedor={toDelete}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={doDelete}
+      />
     </div>
   );
 };

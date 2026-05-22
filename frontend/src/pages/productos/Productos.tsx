@@ -7,6 +7,8 @@ import {
   proveedoresService,
   type Proveedor,
 } from "../../services/entities";
+import ProductoFormModal from "./ProductoFormModal";
+import ProductoDeleteModal from "./ProductoDeleteModal";
 
 const Productos = () => {
   const queryClient = useQueryClient();
@@ -90,6 +92,10 @@ const Productos = () => {
     }
   }, [selectedProducto, reset]);
 
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [toDelete, setToDelete] = useState<Producto | null>(null);
+
   const onSubmit = (data: Omit<Producto, "id">) => {
     if (selectedProducto) {
       updateMutation.mutate({
@@ -99,6 +105,36 @@ const Productos = () => {
       return;
     }
     createMutation.mutate(data);
+  };
+
+  const openCreate = () => {
+    setSelectedProducto(null);
+    reset({
+      codigo: "",
+      descripcion: "",
+      stock: 0,
+      precio: 0,
+      idProveedor: undefined,
+    });
+    setShowModal(true);
+  };
+
+  const openEdit = (producto: Producto) => {
+    setSelectedProducto(producto);
+    setShowModal(true);
+  };
+
+  const confirmDelete = (producto: Producto) => {
+    setToDelete(producto);
+    setShowDeleteModal(true);
+  };
+
+  const doDelete = () => {
+    if (toDelete) {
+      deleteMutation.mutate(toDelete.id);
+    }
+    setShowDeleteModal(false);
+    setToDelete(null);
   };
 
   return (
@@ -112,89 +148,14 @@ const Productos = () => {
         </div>
       </div>
 
-      <div className="row gy-4">
-        <div className="col-lg-5">
-          <div className="card border-secondary shadow-sm">
-            <div className="card-body">
-              <h5>{selectedProducto ? "Editar producto" : "Nuevo producto"}</h5>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-3">
-                  <label className="form-label">Código</label>
-                  <input className="form-control" {...register("codigo")} />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Descripción</label>
-                  <input
-                    className="form-control"
-                    {...register("descripcion")}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Stock</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    {...register("stock", { valueAsNumber: true })}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Precio</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-control"
-                    {...register("precio", { valueAsNumber: true })}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Proveedor</label>
-                  <select
-                    className="form-select"
-                    {...register("idProveedor", {
-                      valueAsNumber: true,
-                      required: "Proveedor es obligatorio",
-                    })}
-                  >
-                    <option value="">Selecciona un proveedor</option>
-                    {proveedores.map((proveedor) => (
-                      <option key={proveedor.id} value={proveedor.id}>
-                        {proveedor.nombre}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.idProveedor && (
-                    <div className="text-danger mt-1">
-                      {errors.idProveedor.message}
-                    </div>
-                  )}
-                </div>
-                <button type="submit" className="btn btn-primary w-100">
-                  {selectedProducto ? "Actualizar producto" : "Crear producto"}
-                </button>
-                {selectedProducto && (
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary w-100 mt-2"
-                    onClick={() => {
-                      setSelectedProducto(null);
-                      reset({
-                        codigo: "",
-                        descripcion: "",
-                        stock: 0,
-                        precio: 0,
-                        idProveedor: undefined,
-                      });
-                    }}
-                  >
-                    Cancelar edición
-                  </button>
-                )}
-              </form>
-            </div>
-          </div>
-        </div>
+      <div className="d-flex justify-content-end mb-4">
+        <button className="btn btn-black" onClick={openCreate}>
+          + Nuevo Producto
+        </button>
+      </div>
 
-        <div className="col-lg-7">
+      <div className="row gy-4">
+        <div className="col-12">
           <div className="card border-secondary shadow-sm">
             <div className="card-body">
               <h5>Lista de productos</h5>
@@ -230,13 +191,13 @@ const Productos = () => {
                           <td>
                             <button
                               className="btn btn-sm btn-outline-primary me-2"
-                              onClick={() => setSelectedProducto(producto)}
+                              onClick={() => openEdit(producto)}
                             >
                               Editar
                             </button>
                             <button
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() => deleteMutation.mutate(producto.id)}
+                              onClick={() => confirmDelete(producto)}
                             >
                               Eliminar
                             </button>
@@ -251,6 +212,37 @@ const Productos = () => {
           </div>
         </div>
       </div>
+
+      <ProductoFormModal
+        show={showModal}
+        selectedProducto={selectedProducto}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedProducto(null);
+          reset({
+            codigo: "",
+            descripcion: "",
+            stock: 0,
+            precio: 0,
+            idProveedor: undefined,
+          });
+        }}
+        onSubmit={(data) => {
+          onSubmit(data);
+          setShowModal(false);
+        }}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+        proveedores={proveedores}
+      />
+
+      <ProductoDeleteModal
+        show={showDeleteModal}
+        producto={toDelete}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={doDelete}
+      />
     </div>
   );
 };

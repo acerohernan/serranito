@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Cliente, clientesService } from "../../services/entities";
+import ClienteFormModal from "./ClienteFormModal";
+import ClienteDeleteModal from "./ClienteDeleteModal";
 
 const Clientes = () => {
   const queryClient = useQueryClient();
@@ -76,6 +78,7 @@ const Clientes = () => {
         nombre: selectedCliente.nombre,
         telefono: selectedCliente.telefono || "",
         direccion: selectedCliente.direccion || "",
+        razonSocial: selectedCliente.razonSocial || "",
       });
     }
   }, [selectedCliente, reset]);
@@ -184,134 +187,35 @@ const Clientes = () => {
         </div>
       </div>
 
-      {/* Create / Edit modal */}
-      {showModal && (
-        <>
-          <div
-            className="custom-modal-backdrop"
-            onClick={() => setShowModal(false)}
-          />
-          <div className="custom-modal">
-            <div className="modal-header">
-              <h5 className="modal-title">
-                {selectedCliente ? "Editar Cliente" : "Crear Nuevo Cliente"}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                aria-label="Close"
-                onClick={() => setShowModal(false)}
-              />
-            </div>
-            <div className="modal-body">
-              <form
-                onSubmit={handleSubmit((data) => {
-                  onSubmit(data);
-                  setShowModal(false);
-                })}
-              >
-                <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">DNI / CUIL</label>
-                    <input
-                      className="form-control"
-                      {...register("dniRuc", {
-                        required: "DNI/RUC es obligatorio",
-                      })}
-                    />
-                    {errors.dniRuc && (
-                      <div className="text-danger mt-1">
-                        {errors.dniRuc.message}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Nombre Completo</label>
-                    <input
-                      className="form-control"
-                      {...register("nombre", {
-                        required: "Nombre es obligatorio",
-                      })}
-                    />
-                    {errors.nombre && (
-                      <div className="text-danger mt-1">
-                        {errors.nombre.message}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Teléfono</label>
-                    <input className="form-control" {...register("telefono")} />
-                  </div>
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label">Razón Social</label>
-                    <input
-                      className="form-control"
-                      {...register("razonSocial")}
-                    />
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Dirección</label>
-                  <input className="form-control" {...register("direccion")} />
-                </div>
+      <ClienteFormModal
+        show={showModal}
+        selectedCliente={selectedCliente}
+        onClose={() => {
+          setShowModal(false);
+          setSelectedCliente(null);
+          reset({
+            dniRuc: "",
+            nombre: "",
+            telefono: "",
+            direccion: "",
+            razonSocial: "",
+          });
+        }}
+        onSubmit={(data) => {
+          onSubmit(data);
+          setShowModal(false);
+        }}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
 
-                <div className="d-flex justify-content-end gap-2">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => {
-                      setShowModal(false);
-                      setSelectedCliente(null);
-                      reset();
-                    }}
-                  >
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn btn-black">
-                    {selectedCliente ? "Guardar cambios" : "Guardar Cliente"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Delete confirmation modal */}
-      {showDeleteModal && (
-        <>
-          <div
-            className="custom-modal-backdrop"
-            onClick={() => setShowDeleteModal(false)}
-          />
-          <div className="custom-modal text-center">
-            <div className="modal-body">
-              <div className="d-flex justify-content-center mb-3">
-                <div className="confirm-delete-icon">🗑️</div>
-              </div>
-              <h4>¿Confirmar eliminación?</h4>
-              <p className="text-muted">
-                Esta acción no se puede deshacer. Los datos del cliente se
-                borrarán permanentemente del sistema.
-              </p>
-              <div className="d-flex justify-content-center gap-3 mt-3">
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  No, mantener
-                </button>
-                <button className="btn btn-danger" onClick={doDelete}>
-                  Sí, eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <ClienteDeleteModal
+        show={showDeleteModal}
+        cliente={toDelete}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={doDelete}
+      />
     </div>
   );
 };
