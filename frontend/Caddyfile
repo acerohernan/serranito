@@ -1,0 +1,20 @@
+{
+    email {env.CADDY_EMAIL}
+}
+
+{env.DOMAIN} {
+    root * /srv
+    encode zstd gzip
+    file_server
+
+    @spa {
+        file {
+            try_files {path} /index.html
+        }
+    }
+    handle @spa {
+        rewrite * /index.html
+    }
+
+    reverse_proxy /api/* http://api-rest:8080
+}
