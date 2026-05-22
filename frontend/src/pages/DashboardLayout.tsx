@@ -34,8 +34,9 @@ const DashboardLayout = () => {
     <div className="min-vh-100 bg-light">
       <div className="row g-0">
         <aside className="col-12 col-md-3 col-xl-2 bg-white border-end vh-100 position-fixed">
-          <div className="p-4">
-            <h4 className="mb-4 text-primary">Serranito</h4>
+          <div className="p-4 app-sidebar">
+            <h4 className="mb-1 text-primary sidebar-brand">Serranito ORM</h4>
+            <div className="sidebar-subtitle">Enterprise Management</div>
             <div className="list-group">
               {links.map((item) => (
                 <NavLink
@@ -48,7 +49,7 @@ const DashboardLayout = () => {
                   }
                 >
                   <span>{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className="label">{item.label}</span>
                 </NavLink>
               ))}
             </div>
@@ -78,7 +79,7 @@ const DashboardLayout = () => {
             </div>
           </div>
 
-          <div className="card shadow-sm">
+          <div className="card shadow-sm main-card">
             <div className="card-body p-4">
               <Outlet />
             </div>

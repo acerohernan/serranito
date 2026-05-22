@@ -16,6 +16,7 @@ import Ventas from "./pages/ventas/Ventas";
 import Configuracion from "./pages/configuracion/Configuracion";
 import NotFound from "./pages/NotFound";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/custom.css";
 
 const queryClient = new QueryClient();
 
