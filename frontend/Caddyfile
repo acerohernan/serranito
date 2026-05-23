@@ -1,5 +1,6 @@
 {
     email {env.CADDY_EMAIL}
+    default_sni serranito.acerohernan.com
 }
 
 serranito.acerohernan.com {
@@ -7,14 +8,11 @@ serranito.acerohernan.com {
     encode zstd gzip
     file_server
 
-    @spa {
-        file {
-            try_files {path} /index.html
-        }
-    }
-    handle @spa {
-        rewrite * /index.html
+    header / {
+      X-Frame-Options "SAMEORIGIN"
+      X-Content-Type-Options "nosniff"
     }
 
+    try_files {path} /index.html
     reverse_proxy /api/* http://api-rest:8080
 }

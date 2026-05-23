@@ -10,10 +10,10 @@ if [ -f .env ]; then
 fi
 
 echo "Pulling the latest Docker images..."
-docker compose -f docker-compose.prod.yml pull
+docker compose pull
 
 echo "Updating running services..."
-docker compose -f docker-compose.prod.yml up -d --remove-orphans
+docker compose up -d --remove-orphans
 
 echo "Restarting services with latest images..."
-docker compose -f docker-compose.prod.yml ps
+docker compose ps
