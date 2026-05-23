@@ -3,11 +3,8 @@ services:
     image: mysql:8.1
     container_name: serranito_mysql
     restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "3306:3306"
     volumes:
@@ -17,6 +14,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - serranito-network
 
   api-rest:
     image: ${DOCKERHUB_USERNAME}/serranito-api-rest:latest
@@ -25,11 +24,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     networks:
@@ -41,9 +37,8 @@ services:
     restart: unless-stopped
     depends_on:
       - api-rest
-    environment:
-      DOMAIN: ${FRONTEND_DOMAIN}
-      CADDY_EMAIL: ${CADDY_EMAIL}
+    env_file:
+      - .env
     ports:
       - "80:80"
       - "443:443"
