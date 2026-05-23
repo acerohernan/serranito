@@ -8,11 +8,14 @@ serranito.acerohernan.com {
     encode zstd gzip
     file_server
 
-    header / {
-      X-Frame-Options "SAMEORIGIN"
-      X-Content-Type-Options "nosniff"
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
     }
 
-    reverse_proxy /api/* http://api-rest:8080
     try_files {path} /index.html
+}
+
+api-serranito.acerohernan.com {
+    reverse_proxy api-rest:8080
 }
