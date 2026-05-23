@@ -18,7 +18,7 @@ services:
       - serranito-network
 
   api-rest:
-    image: ${DOCKERHUB_USERNAME}/serranito-api-rest:latest
+    image: acerohernan/serranito-api-rest:latest
     container_name: serranito_api
     restart: unless-stopped
     depends_on:
@@ -32,7 +32,7 @@ services:
       - serranito-network
 
   frontend:
-    image: ${DOCKERHUB_USERNAME}/serranito-frontend:latest
+    image: acerohernan/serranito-frontend:latest
     container_name: serranito_frontend
     restart: unless-stopped
     depends_on:
