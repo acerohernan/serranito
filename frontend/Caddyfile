@@ -13,6 +13,6 @@ serranito.acerohernan.com {
       X-Content-Type-Options "nosniff"
     }
 
-    try_files {path} /index.html
     reverse_proxy /api/* http://api-rest:8080
+    try_files {path} /index.html
 }
