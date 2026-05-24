@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    command: --default-authentication-plugin=caching_sha2_password
     ports:
       - "3306:3306"
     volumes:
